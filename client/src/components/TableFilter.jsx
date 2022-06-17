@@ -4,13 +4,13 @@ import MyInput from "./UI/input/MyInput"
 
 export default function TableFilter({filter, setFilter}) {
   return (
-    <div>
+    <div className='filters-div'>
       <MySelect 
         value={filter.column}
         onChange={selectedColumn => setFilter({ ...filter, column: selectedColumn})}
         defaultValue='Фильтровать по...'
         options={[
-          {value: 'name', name: 'по имени'},
+          {value: 'name', name: 'по названию'},
           {value: 'amount', name: 'по количеству'},
           {value: 'distance', name: 'по расстоянию'}
         ]}
@@ -20,7 +20,7 @@ export default function TableFilter({filter, setFilter}) {
         onChange={selectedCondition => setFilter({ ...filter, condition: selectedCondition})}
         defaultValue='условие'
         options={[
-          {value: 'equal', name: 'равно'},
+          {value: 'equals', name: 'равно'},
           {value: 'includes', name: 'содержит'},
           {value: 'larger', name: 'больше'},
           {value: 'smaller', name: 'меньше'}

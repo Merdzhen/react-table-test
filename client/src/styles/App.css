@@ -1,5 +1,8 @@
-.App {
-  /* text-align: center; */
+.filters-div {
+  display: flex;
+  margin-top: 20px;
+  /* margin-bottom: 20px; */
+  max-height: 50px;
 }
 
 /* ------------------ main table ------------------ */

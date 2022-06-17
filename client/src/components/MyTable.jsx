@@ -1,8 +1,5 @@
 import * as React from 'react';
-import { useState, useMemo } from 'react'
-import PropTypes from 'prop-types';
-import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
+import { useState, useEffect } from 'react'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
@@ -12,80 +9,17 @@ import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import IconButton from '@mui/material/IconButton';
-import FirstPageIcon from '@mui/icons-material/FirstPage';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import LastPageIcon from '@mui/icons-material/LastPage';
 import TableFilter from './TableFilter';
 import {useFilter} from '../hooks/useTableData';
-
-function TablePaginationActions(props) {
-  const theme = useTheme();
-  const { count, page, rowsPerPage, onPageChange } = props;
-
-  const handleFirstPageButtonClick = (event) => {
-    onPageChange(event, 0);
-  };
-
-  const handleBackButtonClick = (event) => {
-    onPageChange(event, page - 1);
-  };
-
-  const handleNextButtonClick = (event) => {
-    onPageChange(event, page + 1);
-  };
-
-  const handleLastPageButtonClick = (event) => {
-    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-  };
-
-  return (
-    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-      <IconButton
-        onClick={handleFirstPageButtonClick}
-        disabled={page === 0}
-        aria-label="first page"
-      >
-        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-      </IconButton>
-      <IconButton
-        onClick={handleBackButtonClick}
-        disabled={page === 0}
-        aria-label="previous page"
-      >
-        {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-      </IconButton>
-      <IconButton
-        onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="next page"
-      >
-        {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-      </IconButton>
-      <IconButton
-        onClick={handleLastPageButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="last page"
-      >
-        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-      </IconButton>
-    </Box>
-  );
-}
-
-TablePaginationActions.propTypes = {
-  count: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-};
+import axios from 'axios'
+import {TablePaginationActions, getSortedData} from '../utils/table'
 
 
-
-export default function CustomPaginationActionsTable() {
+export default function MyTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  // для выполнения задания беру демонстрационные данные:
   const [tabledata, setTabledata] = useState([
     {date: '2021-01-15', name: 'name1', amount: 3.7, distance: 16.5},
     {date: '2022-05-20', name: 'name2', amount: 356, distance: 17.5},
@@ -103,24 +37,18 @@ export default function CustomPaginationActionsTable() {
   ])
   const [filter, setFilter] =useState({column: '', condition: '', query: ''})
   const filteredData = useFilter(tabledata, filter.column, filter.condition, filter.query)
-
-  const getSortedData = (column) => {
-    let ascCheck = [] // для проверки - все ли элементы массива расположены в порядке возрастания
-    for (let i = 0; i < tabledata.length - 1; i += 1) {
-      ascCheck.push(tabledata[i + 1][column] >= tabledata[i][column])
-    }
-    if (ascCheck.includes(false)) { // если НЕ все элементы массива расположены в порядке возрастания
-      typeof tabledata[0][column] === 'number'
-      ? setTabledata([...tabledata].sort((a, b) => (a[column] - b[column])))
-      : setTabledata([...tabledata].sort((a, b) => a[column].localeCompare(b[column])))
-    } else {
-      typeof tabledata[0][column] === 'number'
-      ? setTabledata([...tabledata].sort((a, b) => (b[column] - a[column])))
-      : setTabledata([...tabledata].sort((a, b) => b[column].localeCompare(a[column])))
-    }
-  }
   
-
+  // когда уже есть БД и бэк- делаем запрос данных оттуда: 
+  useEffect(() => {
+    axios.get('http://localhost:3001/table')
+      .then((results) => {
+        if (results.data.length) {
+           // console.log(topResults.data);
+           setTabledata(results.data)
+        }
+      })
+      .catch(err=>console.log('get request error', err))
+  }, [])
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -143,9 +71,9 @@ export default function CustomPaginationActionsTable() {
           <TableHead>
             <TableRow>
               <TableCell>Дата</TableCell>
-              <TableCell align="right" onClick={() => getSortedData('name')}>Название</TableCell>
-              <TableCell align="right" onClick={() => getSortedData('amount')}>Количество</TableCell>
-              <TableCell align="right" onClick={() => getSortedData('distance')}>Расстояние, км</TableCell>
+              <TableCell align="right" onClick={() => getSortedData(tabledata, setTabledata, 'name')}>Название</TableCell>
+              <TableCell align="right" onClick={() => getSortedData(tabledata, setTabledata, 'amount')}>Количество</TableCell>
+              <TableCell align="right" onClick={() => getSortedData(tabledata, setTabledata, 'distance')}>Расстояние, км</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -154,7 +82,7 @@ export default function CustomPaginationActionsTable() {
               // : tabledata
               ? filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : filteredData
-            ).map((row) => (
+              ).map((row) => (
               <TableRow key={row.date}>
                 <TableCell component="th" scope="row">
                   {row.date}
@@ -182,7 +110,6 @@ export default function CustomPaginationActionsTable() {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
                 colSpan={4}
-                // count={tabledata.length}
                 count={filteredData.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
