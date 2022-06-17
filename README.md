@@ -1,7 +1,18 @@
 # react-table-test
 
-Запустить с помощью команд:
+Для запуска:
+<br>
 
-### `cd client`
-### `npm i`
-### `npm start`
+В папке `server`:
+ - `npm i`,
+ - создать файл `.env`,
+ - создать БД:
+   `npx sequelize db:create`
+   `npx sequelize db:migrate`
+   `npx sequelize-cli db:seed:all`
+ - `npm start`
+<br>
+
+В папке `client`:
+ - `npm i`
+ - `npm start`
