@@ -23,19 +23,19 @@ export default function MyTable() {
 
   const [tabledata, setTabledata] = useState([])
     // если нет доступа к базе данных берем демонстрационные данные (для демонстрации выполненного функционала задания):
-    // {date: '2021-01-15', name: 'name1', amount: 3.7, distance: 16.5},
-    // {date: '2022-05-20', name: 'name2', amount: 356, distance: 17.5},
-    // {date: '2021-02-15', name: 'name3', amount: 262, distance: 1.5},
-    // {date: '2021-02-25', name: 'name4', amount: 16.0, distance: 10},
-    // {date: '2021-09-05', name: 'name5', amount: 17.5, distance: 18.5},
-    // {date: '2021-10-10', name: 'name6', amount: 345.7, distance: 16.5},
-    // {date: '2021-12-13', name: 'name7', amount: 245.9, distance: 16.4},
-    // {date: '2022-01-17', name: 'name8', amount: 3.7, distance: 17.9},
-    // {date: '2022-02-27', name: 'name9', amount: 3.7, distance: 26.0},
-    // {date: '2022-06-03', name: 'name10', amount: 3.7, distance: 46.8},
-    // {date: '2022-04-29', name: 'name11', amount: 3.7, distance: 76.4},
-    // {date: '2022-03-23', name: 'name12', amount: 3.7, distance: 15.8},
-    // {date: '2022-02-19', name: 'name13', amount: 3.7, distance: 19.05}
+    // {id: 1, date: '2021-01-15', name: 'name1', amount: 3.7, distance: 16.5},
+    // {id: 2, date: '2022-05-20', name: 'name2', amount: 356, distance: 17.5},
+    // {id: 3, date: '2021-02-15', name: 'name3', amount: 262, distance: 1.5},
+    // {id: 4, date: '2021-02-25', name: 'name4', amount: 16.0, distance: 10},
+    // {id: 5, date: '2021-09-05', name: 'name5', amount: 17.5, distance: 18.5},
+    // {id: 6, date: '2021-10-10', name: 'name6', amount: 345.7, distance: 16.5},
+    // {id: 7, date: '2021-12-13', name: 'name7', amount: 245.9, distance: 16.4},
+    // {id: 8, date: '2022-01-17', name: 'name8', amount: 3.7, distance: 17.9},
+    // {id: 9, date: '2022-02-27', name: 'name9', amount: 3.7, distance: 26.0},
+    // {id: 10, date: '2022-06-03', name: 'name10', amount: 3.7, distance: 46.8},
+    // {id: 12, date: '2022-04-29', name: 'name11', amount: 3.7, distance: 76.4},
+    // {id: 13, date: '2022-03-23', name: 'name12', amount: 3.7, distance: 15.8},
+    // {id: 14, date: '2022-02-19', name: 'name13', amount: 3.7, distance: 19.05}
   const [filter, setFilter] =useState({column: '', condition: '', query: ''})
   const filteredData = useFilter(tabledata, filter.column, filter.condition, filter.query)
   
@@ -79,8 +79,6 @@ export default function MyTable() {
           </TableHead>
           <TableBody>
             {(rowsPerPage > 0
-              // ? tabledata.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              // : tabledata
               ? filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : filteredData
               ).map((row) => (
